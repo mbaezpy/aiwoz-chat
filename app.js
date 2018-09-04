@@ -58,7 +58,7 @@ io.on('connection', (socket) => {
               labels.forEach(label => console.log(label.description));               
             }, 
             error : err => {
-              io.sockets.emit('error', err) 
+              io.sockets.emit('error', {msg: "Error processing image", error: err}) 
             }
           });
         } else {

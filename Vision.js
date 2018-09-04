@@ -21,6 +21,6 @@ module.exports.processImage = (url, cb) => {
     })
     .catch(err => {
       console.error('ERROR:', err);
-      if (cb.error) cb.error(err) 
+      if (cb.error) cb.error('ERROR:' + err); 
     });
 };
