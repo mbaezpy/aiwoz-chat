@@ -12,9 +12,10 @@ const vision = require('./Vision')
 app.use(express.static('static'))
 
 
-//Listen on port 3000
-server = app.listen(3000)
+var port   = process.env.PORT || 8080;
+var server = app.listen(port);
 
+console.log('aiwoz server listening at http://localhost:' + port);
 
 //socket.io instantiation
 const io = require("socket.io")(server)
