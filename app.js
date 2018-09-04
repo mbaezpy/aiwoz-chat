@@ -56,6 +56,9 @@ io.on('connection', (socket) => {
               
               console.log('Labels:');
               labels.forEach(label => console.log(label.description));               
+            }, 
+            error : err => {
+              io.sockets.emit('error', err) 
             }
           });
         } else {

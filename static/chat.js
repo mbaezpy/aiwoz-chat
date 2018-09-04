@@ -63,6 +63,10 @@ $(function(){
         $(".chat-history").animate({scrollTop: $(".chat-history").height()}, 1000);
 	})  
   
+	socket.on('error', (err) => {
+		console.log(err)
+	})    
+  
 	$(".chat-message button").click(function(){
 		socket.emit('new_message', {message : $("#message-to-send").val(),
                                    type : $(".opt-image").hasClass("selected")? "image" : "text"})
