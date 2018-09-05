@@ -75,6 +75,73 @@
   </li>
 </script>
     
+<script id="message-nlp-template" type="text/x-handlebars-template">
+  <li>
+    <div class="message-data">
+      <span class="message-data-name"><i class="fa fa-circle online"></i> {{username}}</span>
+      <span class="message-data-time">{{time}}, Today</span>
+    </div>  
+    <div class="message ai-message">
+      <p>
+      {{#with annotations.documentSentiment}}
+      score: {{formatNum score}}
+      magnitud: {{formatNum magnitude}}
+      {{/with}}
+      </p>
+
+      <table class="table">
+      <tr>
+        <th>Name</th>
+        <th>Type</th> 
+        <th>Salience</th>  
+        <th>Wiki</th>
+      </tr>        
+      {{#each annotations.entities}}
+
+        <tr>
+          <td>{{name}}</td>
+          <td>{{type}}</td>  
+          <td>{{formatNum salience}}</td> 
+          
+          <td>
+          {{#if metadata.wikipedia_url}}
+            <a href="{{metadata.wikipedia_url}}">Wiki</a>
+          {{/if}}
+          </td>  
+          
+        </tr>
+      {{/each}}
+      </table>
+
+  </div>
+  </li>
+</script>    
+    
+<script id="message-vision-template" type="text/x-handlebars-template">
+  <li>
+    <div class="message-data">
+      <span class="message-data-name"><i class="fa fa-circle online"></i> {{username}}</span>
+      <span class="message-data-time">{{time}}, Today</span>
+    </div>  
+    <div class="message ai-message">
+
+      <table class="table">
+      <tr>
+        <th>Label</th>
+        <th>Score</th>        
+      </tr>          
+      {{#each labels}}
+      <tr>
+        <td>{{description}}</td>
+        <td>{{formatNum score}}</td>        
+      </tr>  
+      {{/each}}
+      </table>
+
+  </div>
+  </li>
+</script>     
+    
     <script src='https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.0/handlebars.min.js'></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="chat.js"></script>      

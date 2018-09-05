@@ -5,7 +5,7 @@
 
 const express = require('express')
 const app = express()
-const vision = require('./Vision')
+const machine = require('./Machine')
 
 
 //middlewares
@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
         // Messages from humans are processed        
 
         if (data.type == "image"){
-          vision.processImage(data.message, {
+          machine.processImage(data.message, {
             done : labels => {
               msg.labels = labels;
               io.sockets.emit('new_message', msg) 
@@ -63,8 +63,18 @@ io.on('connection', (socket) => {
           });
         } else {
           //TODO: process other types of messages
-          msg.labels = [{description: "hidden", score: 1}]
-          io.sockets.emit('new_message', msg)  
+          
+          machine.processText(data.message, {
+            done : annotations => {
+              msg.annotations = annotations;
+              io.sockets.emit('new_message', msg) 
+                         
+            }, 
+            error : err => {
+              io.sockets.emit('error', {msg: "Error processing image", error: err}) 
+            }
+          });          
+          
         }          
 
     })

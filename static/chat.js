@@ -8,6 +8,10 @@ $(function(){
     
     
     var socket = io.connect(window.location.origin)
+    
+    Handlebars.registerHelper('formatNum', function(num) {
+      return num == 0? 0 : Math.round(num * 100)/100
+    });
      
   
     socket.on("connect", () => {
@@ -49,13 +53,17 @@ $(function(){
           msg = tmpl(params)
         } else if (role == "chatbot") {
           // chatbots can see only predicted labels
-          var tmpl = Handlebars.compile($("#message-response-template").html())
           
-          params.message = ""
-          data.labels.forEach(label => {
-            params.message += label.description + "(" + (Math.round(label.score *100)/100) + ") "
-          }); 
-          msg = tmpl(params)
+          // look at the data type, and based on that the template
+          if (data.type == "image") {
+            var tmpl = Handlebars.compile($("#message-vision-template").html())          
+            params.labels = data.labels
+            msg = tmpl(params)
+          } else {
+            var tmpl = Handlebars.compile($("#message-nlp-template").html())          
+            params.annotations = data.annotations 
+            msg = tmpl(params)            
+          }
         } 
       
 		$(".chat-history ul").append(msg)

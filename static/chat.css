@@ -212,3 +212,28 @@ body {
 .message img {
   width: 100%;
 }
+
+.table td, .table td, .table th{
+  padding: 5px;  
+}
+
+.table, .table td, .table td, .table th{
+  border: 1px solid black;
+}
+
+.table th{
+  font-weight: bold;
+}
+
+.chat .chat-history .ai-message {
+  background: white;
+  color: black; 
+  /*color: #92959E; */
+}
+.chat .chat-history .ai-message a {
+  color: black;   
+}
+
+.chat .chat-history .ai-message:after {
+  border-bottom-color: white;
+}
