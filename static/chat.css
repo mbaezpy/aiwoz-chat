@@ -212,7 +212,10 @@ body {
 .message img {
   width: 100%;
 }
-
+.table {
+  font-size: .6em;
+  line-height: 1.4;
+}
 .table td, .table td, .table th{
   padding: 5px;  
 }
@@ -236,4 +239,23 @@ body {
 
 .chat .chat-history .ai-message:after {
   border-bottom-color: white;
+}
+.e-VERY_LIKELY {
+  color: green;
+  font-weight: bold;
+}
+.e-LIKELY {
+  color: green;
+}
+.e-VERY_UNLIKELY {
+  color: lightgray;
+}
+.e-UNLIKELY {
+  color: gray;
+}
+
+.colors{
+  display: flex;
+  width: 100%;
+  height: 20px;
 }

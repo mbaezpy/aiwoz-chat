@@ -4,22 +4,28 @@
 */
 
 // Imports the Google Cloud client library
-const vision   = require('@google-cloud/vision');
-const language = require('@google-cloud/language');
+const Vision   = require('@google-cloud/vision');
+const Language = require('@google-cloud/language');
 
 // Creates a client
-const visCli = new vision.ImageAnnotatorClient();
-const txtCli = new language.LanguageServiceClient();
+const visCli = new Vision.ImageAnnotatorClient();
+const txtCli = new Language.LanguageServiceClient();
 
 
 module.exports.processImage = (url, cb) => { 
-
 // Performs label detection on the image file
   visCli
-    .labelDetection(url)
+    .annotateImage({
+      image: {source: {imageUri: url}},
+      features: [{type: "FACE_DETECTION"},
+                 {type: "LABEL_DETECTION", 
+                  maxResults: 20},
+                 {type: "IMAGE_PROPERTIES"},
+                 {type: "LANDMARK_DETECTION"}
+                ],
+    })
     .then(results => {
-      cb.done(results[0].labelAnnotations);
-      console.log(results[0]);
+      cb.done(results[0]);
     })
     .catch(err => {
       console.error('ERROR:', err);

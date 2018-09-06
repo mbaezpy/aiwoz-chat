@@ -12,6 +12,10 @@ $(function(){
     Handlebars.registerHelper('formatNum', function(num) {
       return num == 0? 0 : Math.round(num * 100)/100
     });
+  
+    Handlebars.registerHelper('formatPerc', function(num) {
+      return (Math.round(num * 10000)/100) + "%"
+    });
      
   
     socket.on("connect", () => {
@@ -57,7 +61,7 @@ $(function(){
           // look at the data type, and based on that the template
           if (data.type == "image") {
             var tmpl = Handlebars.compile($("#message-vision-template").html())          
-            params.labels = data.labels
+            params.annotations = data.annotations
             msg = tmpl(params)
           } else {
             var tmpl = Handlebars.compile($("#message-nlp-template").html())          
@@ -68,7 +72,7 @@ $(function(){
       
 		$(".chat-history ul").append(msg)
       
-        $(".chat-history").animate({scrollTop: $(".chat-history").height()}, 1000);
+        $(".chat-history").animate({scrollTop: $(".chat-history ul").height()}, 1000);
 	})  
   
 	socket.on('error', (err) => {
@@ -83,7 +87,7 @@ $(function(){
           $(".opt-image").click();
         }
       
-        $(".chat-history").animate({scrollTop: $(".chat-history").height()}, 1000);
+        $(".chat-history").animate({scrollTop: $(".chat-history ul").height()}, 1000);
 	})  
   
     $(".opt-image").click(function(e){

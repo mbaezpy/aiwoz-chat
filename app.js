@@ -50,12 +50,19 @@ io.on('connection', (socket) => {
 
         if (data.type == "image"){
           machine.processImage(data.message, {
-            done : labels => {
-              msg.labels = labels;
+            done : annotations => {
+              
+              msg.annotations = {
+                labels    : annotations.labelAnnotations,
+                landmarks : annotations.landmarkAnnotations,
+                faces     : annotations.faceAnnotations,
+                properties: annotations.imagePropertiesAnnotation
+              }
+              
               io.sockets.emit('new_message', msg) 
               
-              console.log('Labels:');
-              labels.forEach(label => console.log(label.description));               
+              //io.sockets.emit('error', {msg: "Log", error: annotations}) 
+                            
             }, 
             error : err => {
               io.sockets.emit('error', {msg: "Error processing image", error: err}) 

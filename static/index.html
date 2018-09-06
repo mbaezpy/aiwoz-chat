@@ -130,14 +130,75 @@
         <th>Label</th>
         <th>Score</th>        
       </tr>          
-      {{#each labels}}
+      {{#each annotations.labels}}
       <tr>
         <td>{{description}}</td>
         <td>{{formatNum score}}</td>        
       </tr>  
       {{/each}}
       </table>
+      
+      {{#if annotations.landmarks.length}}
+        <table class="table">
+        <tr>
+          <th>Landmark</th>
+          <th>Coordinates</th>        
+        </tr>          
+        {{#each annotations.landmarks}}
+        <tr>
+          <td>{{description}}</td>
+          <td>
+            <span> (Score: {{score}}) </span><br>
+            {{#each locations}}   
+            
+            <span> Latitude: {{latLng.latitude}} </span><br>
+            <span> Longitude: {{latLng.longitude}} </span>
+            {{/each}}
+          </td>        
+        </tr>  
+        {{/each}}
+        </table>  
+      {{else}}
+        <p>Location not detected</p>
+      {{/if}}
+      
+      {{#if annotations.faces.length}}
+      <p>Detected: {{annotations.faces.length}} faces</p>
+        <table class="table">
+        <tr>
+          <th>Face</th>
+          <th>Expression</th>        
+        </tr>          
+        {{#each annotations.faces}}
+        <tr>
+          <td>confidence: {{formatNum detectionConfidence}}</td>
+          <td>
+            <span class="e-{{angerLikelihood}}"> Anger: {{angerLikelihood}}</span><br>
+            <span class="e-{{headwearLikelihood}}"> Headwear: {{headwearLikelihood}}</span><br>
+            <span class="e-{{joyLikelihood}}"> Joy: {{joyLikelihood}}</span><br>
+            <span class="e-{{sorrowLikelihood}}"> Sorrow: {{sorrowLikelihood}}</span><br>
+            <span class="e-{{surpriseLikelihood}}"> Surprise: {{surpriseLikelihood}}</span><br>
+            <span class="e-{{blurredLikelihood}}"> Blurred: {{blurredLikelihood}}</span><br>
+            <span class="e-{{underExposedLikelihood}}"> Under exposure: {{underExposedLikelihood}}</span>            
+            
+          </td>        
+        </tr>  
+        {{/each}}
+        </table>  
+      {{else}}
+      <p>No faces detected</p>
+      {{/if}}     
+      
+        <p>Dominant colors</p>
+        <div class="colors">
+        {{#each annotations.properties.dominantColors.colors}}
+        <i class="fa" style="background:rgb({{color.red}},{{color.green}},{{color.blue}});width:{{formatPerc pixelFraction}};"
+           title="{{formatPerc pixelFraction}}"></i>
+        {{/each}}
+        </div>
 
+      
+      
   </div>
   </li>
 </script>     
