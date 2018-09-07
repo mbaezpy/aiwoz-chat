@@ -5,6 +5,8 @@ $(function(){
     
     var username = null;
     var role = null;
+  
+    let searchParams = new URLSearchParams(window.location.search)  
     
     
     var socket = io.connect(window.location.origin)
@@ -13,18 +15,20 @@ $(function(){
       return num == 0? 0 : Math.round(num * 100)/100
     });
   
-    Handlebars.registerHelper('formatPerc', function(num) {
-      return (Math.round(num * 10000)/100) + "%"
+    Handlebars.registerHelper('formatPerc', function(num, dec) {
+      dec = dec===undefined ? 2 : dec
+      return (Math.round(num * 100 * (10**dec))/ (10**dec))
     });
      
   
     socket.on("connect", () => {
-      let searchParams = new URLSearchParams(window.location.search)
+      
       username = searchParams.get('username')
       role     = searchParams.get('role')
       
       socket.emit('user_login', {username : username, 
-                                 role: role} );      
+                                 role: role} );  
+      $("body").addClass("role-" + role)
     })
 
 	//Listen on typing
