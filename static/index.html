@@ -30,7 +30,6 @@
       
       <div class="chat-history">
         <ul>
-     
         </ul>
         
       </div> <!-- end chat-history -->
@@ -118,6 +117,24 @@
   </div>
   </li>
 </script>    
+
+<script id="likert-template" type="text/x-handlebars-template">
+     <div class="row"> 
+       <div class="col-md-4">
+         {{label}}
+       </div> 
+       <div class="likert likert-{{class}} col-md-4">
+         <span class="badge badge-primary"> </span>
+         <span class="badge badge-primary"> </span>
+         <span class="badge badge-primary"> </span>
+         <span class="badge badge-primary"> </span>
+         <span class="badge badge-primary"> </span>
+       </div>
+       <div class="col-md-4">
+         <span class="pull-right">{{score}}</span>
+       </div>                
+      </div>  
+</script>
     
 <script id="message-vision-template" type="text/x-handlebars-template">
   <li>
@@ -170,30 +187,34 @@
       {{/if}}
       
       {{#if annotations.faces.length}}
-      <div class="widget"> 
-      <p>Detected: {{annotations.faces.length}} faces</p>
-        <table class="table">
-        <tr>
-          <th>Face</th>
-          <th>Expression</th>        
-        </tr>          
+        <div class="widget"> 
+        <p>Detected: {{annotations.faces.length}} faces</p>
+        </div>  
+          
         {{#each annotations.faces}}
-        <tr>
-          <td>confidence: {{formatNum detectionConfidence}}</td>
-          <td>
-            <span class="e-{{angerLikelihood}}"> Anger: {{angerLikelihood}}</span><br>
-            <span class="e-{{headwearLikelihood}}"> Headwear: {{headwearLikelihood}}</span><br>
-            <span class="e-{{joyLikelihood}}"> Joy: {{joyLikelihood}}</span><br>
-            <span class="e-{{sorrowLikelihood}}"> Sorrow: {{sorrowLikelihood}}</span><br>
-            <span class="e-{{surpriseLikelihood}}"> Surprise: {{surpriseLikelihood}}</span><br>
-            <span class="e-{{blurredLikelihood}}"> Blurred: {{blurredLikelihood}}</span><br>
-            <span class="e-{{underExposedLikelihood}}"> Under exposure: {{underExposedLikelihood}}</span>            
+        <div class="widget">   
+
+              <div class="small">
+              <span>Confidence</span> 
+              <span class="pull-right">{{formatPerc detectionConfidence 0}}%</span>
+              <div class="progress" style="height: 2px;">
+                <div class="progress-bar" role="progressbar" style="width: {{formatPerc detectionConfidence 0}}%;" aria-valuenow="{{formatPerc detectionConfidence 0}}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>            
             
-          </td>        
-        </tr>  
+            <div class="small">
+            {{{likert "Anger" angerLikelihood}}}
+            {{{likert "Headwear" headwearLikelihood}}}
+            {{{likert "Joy" joyLikelihood}}}
+            {{{likert "Sorrow" sorrowLikelihood}}}
+            {{{likert "Surprise" surpriseLikelihood}}}
+            {{{likert "Blurred" blurredLikelihood}}} 
+            {{{likert "Exposure" underExposedLikelihood}}} 
+            </div>  
+                   
+        </div>  
         {{/each}}
-        </table> 
-      </div>
+
       {{else}}
       <div class="widget">         
         <p>No faces detected</p>

@@ -19,7 +19,21 @@ $(function(){
       dec = dec===undefined ? 2 : dec
       return (Math.round(num * 100 * (10**dec))/ (10**dec))
     });
+  
+    Handlebars.registerHelper('toLowerCase', function(str) {
+      return str.toLowerCase()
+    });  
      
+    Handlebars.registerHelper('likert', function(label, score) {
+        var tmpl = Handlebars.compile($("#likert-template").html())          
+        return tmpl({
+          label : label,
+          score : score,
+          class : score.toLowerCase()
+        })       
+      
+    });
+       
   
     socket.on("connect", () => {
       
