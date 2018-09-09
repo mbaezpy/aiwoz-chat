@@ -228,6 +228,16 @@ body {
   font-weight: bold;
 }
 
+.chat-with {
+  display: flex;
+  line-height: 1.2em;
+}
+.chat-with i {
+    color: #94C2ED;
+    font-size: 2.1em;
+    padding-right: 10px;
+}
+
 .chat .chat-history .ai-message {
   background: white;
   color: black; 
