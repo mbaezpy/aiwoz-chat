@@ -80,7 +80,7 @@
   </li>
 </script>
     
-<script id="message-nlp-template" type="text/x-handlebars-template">
+<script id="message-glang-template" type="text/x-handlebars-template">
   <li>
     <div class="message-data">
       <span class="message-data-name"><i class="fa fa-circle online"></i> {{username}}</span>
@@ -88,7 +88,7 @@
     </div>  
     <div class="message ai-message">
       <p>
-      {{#with annotations.documentSentiment}}
+      {{#with annotations.intent}}
       score: {{formatNum score}}
       magnitud: {{formatNum magnitude}}
       {{/with}}
@@ -117,6 +117,57 @@
         </tr>
       {{/each}}
       </table>
+
+  </div>
+  </li>
+</script>     
+    
+    
+<script id="message-nlp-template" type="text/x-handlebars-template">
+  <li>
+    <div class="message-data">
+      <span class="message-data-name"><i class="fa fa-circle online"></i> {{username}}</span>
+      <span class="message-data-time">{{time}}, Today</span>
+    </div>  
+    <div class="message ai-message">
+      
+      <div class="widget img-labels">
+      <p>Labels</p>
+      {{#each annotations.intent_ranking}}
+      <div class="small">
+        <span>{{name}}</span> 
+        <span class="pull-right">{{formatPerc confidence 0}}%</span>
+        <div class="progress" style="height: 2px;">
+          <div class="progress-bar" role="progressbar" style="width: {{formatPerc confidence 0}}%;" aria-valuenow="{{formatPerc confidence 0}}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>  
+      {{/each}}          
+      </div>
+      
+      {{#if annotations.entities}}
+      <table class="table">
+      <tr>
+        <th>Entity</th>
+        <th>Value</th>
+        <th>Confidence</th> 
+        <th>Extractor</th>  
+      </tr>        
+      {{#each annotations.entities}}
+
+        <tr>
+          <td>{{entity}}</td>
+          <td>{{value}}</td>          
+          <td>{{formatNum confidence}}</td>        
+          <td>{{extractor}}</td>  
+          
+        </tr>
+      {{/each}}
+      </table>
+      {{else}}
+        <div class="widget">
+          <p>Entities not detected</p>
+        </div>
+      {{/if}}
 
   </div>
   </li>

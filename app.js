@@ -70,15 +70,15 @@ io.on('connection', (socket) => {
           });
         } else {
           //TODO: process other types of messages
+             
           
-          machine.processText(data.message, {
+          machine.processUserResponse(data.message, {
             done : annotations => {
               msg.annotations = annotations;
-              io.sockets.emit('new_message', msg) 
-                         
+              io.sockets.emit('new_message', msg);      
             }, 
             error : err => {
-              io.sockets.emit('error', {msg: "Error processing image", error: err}) 
+              io.sockets.emit('error', {msg: "Error in NLU", error: err}) 
             }
           });          
           

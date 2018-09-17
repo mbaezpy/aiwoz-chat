@@ -11,6 +11,9 @@ const Language = require('@google-cloud/language');
 const visCli = new Vision.ImageAnnotatorClient();
 const txtCli = new Language.LanguageServiceClient();
 
+// Instantiate a DialogFlow client.
+const axios = require('axios');
+
 
 module.exports.processImage = (url, cb) => { 
 // Performs label detection on the image file
@@ -58,5 +61,25 @@ module.exports.processText = (text, cb) => {
       console.error('ERROR:', err);
       if (cb.error) cb.error('ERROR:' + err); 
     });  
+  
+};
+
+module.exports.processUserResponse = (query, cb) =>{
+  const baseUrl = "https://dry-thicket-91678.herokuapp.com/parse";
+  
+  axios.get(baseUrl, {
+    params : {
+      q : query,
+      project : "current"
+    }
+  })
+  .then(function (response) {
+    // handle success
+    cb.done(response.data);
+  })
+  .catch(function (err) {
+    // handle error
+    if (cb.error) cb.error('ERROR: ' + err); 
+  });
   
 };
