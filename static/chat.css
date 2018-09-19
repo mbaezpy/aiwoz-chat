@@ -356,8 +356,15 @@ body {
   display: none;
 }
 
-.graph {
+.role-chatbot .pictures {
+  display: none;
+}
+
+.graph, .pictures {
   overflow: scroll;
+}
+.pictures {
+  display: flex;
 }
 
 .people-list ul li {
@@ -370,4 +377,10 @@ body {
 }
 .topic h4 {
   font-size: 1.2em;
+}
+
+/*Pictures*/
+.pictures img {
+  width:100%;
+  cursor: pointer;
 }

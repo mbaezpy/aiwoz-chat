@@ -49,12 +49,25 @@
       
     </div> <!-- end chat -->
     
-    <div class="graph people-list">
-
-    </div>
+    <div class="graph people-list"></div>
+    <div class="pictures people-list"></div>
     
   </div> <!-- end container -->
 
+<script id="graph-pic-template" type="text/x-handlebars-template">  
+      <ul class="list">
+          <li class="clearfix topic">
+            <h4>Pictures</h4>
+          </li>
+        {{#each pictures}}         
+          <li class="clearfix">
+            <img class="img" src="{{url}}" />
+          </li>
+        {{/each}}
+      </ul>
+
+</script>    
+    
 <script id="graph-dic-template" type="text/x-handlebars-template">  
       <ul class="list">
         {{#each topics}} 

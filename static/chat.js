@@ -11,11 +11,22 @@ $(function(){
     var socket = io.connect(window.location.origin)
     
     // Loading the Knowledge graph tree    
-    $.get("/api/graph", function(data){
-        var tmpl = Handlebars.compile($("#graph-dic-template").html())          
-        var el = tmpl({topics : data}); 
-        $(".graph").append(el);
-    });
+    if (searchParams.get('role') == 'chatbot'){
+      $.get("/api/graph", function(data){
+          var tmpl = Handlebars.compile($("#graph-dic-template").html())          
+          var el = tmpl({topics : data}); 
+          $(".graph").append(el);
+      });
+    }
+  
+    // Loading the experimental conditions
+    if (searchParams.get('role') == 'human'){
+      $.get("/api/config", function(data){
+          var tmpl = Handlebars.compile($("#graph-pic-template").html())          
+          var el = tmpl({pictures : data}); 
+          $(".pictures").append(el);
+      });
+    }    
     
     
     
@@ -128,6 +139,12 @@ $(function(){
         
       
     })
+  
+      $(".pictures").on("click", "img", function(e){
+        var url = $(e.currentTarget).attr("src");
+        console.log(url);
+		socket.emit('new_message', {message : url, type : "image"});        
+      });
 
 
 	//Emit typing
