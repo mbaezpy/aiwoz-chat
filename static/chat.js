@@ -7,9 +7,17 @@ $(function(){
     var role = null;
   
     let searchParams = new URLSearchParams(window.location.search)  
-    
-    
+        
     var socket = io.connect(window.location.origin)
+    
+    // Loading the Knowledge graph tree    
+    $.get("/api/graph", function(data){
+        var tmpl = Handlebars.compile($("#graph-dic-template").html())          
+        var el = tmpl({topics : data}); 
+        $(".graph").append(el);
+    });
+    
+    
     
     Handlebars.registerHelper('formatNum', function(num) {
       return num == 0? 0 : Math.round(num * 100)/100
@@ -126,6 +134,8 @@ $(function(){
 	$("#message-to-send").bind("keypress", () => {
 		socket.emit('typing')
 	})
+  
+  
 
 
 });

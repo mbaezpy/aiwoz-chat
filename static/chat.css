@@ -282,7 +282,11 @@ body {
 }
 
 .role-chatbot .chat {
-  width: 100%;
+  width: 690px;
+}
+
+.role-chatbot .container {
+  width: 950px;
 }
 
 .widget {
@@ -346,4 +350,24 @@ body {
 .likert-very_likely span:nth-child(5){
   background: #007bff;
   opacity: 1;
+}
+
+.role-human .graph {
+  display: none;
+}
+
+.graph {
+  overflow: scroll;
+}
+
+.people-list ul li {
+  padding-bottom: 10px;
+}
+.topic {
+  text-transform: uppercase;
+  font-size: 1.2em;
+  margin-top: 20px;  
+}
+.topic h4 {
+  font-size: 1.2em;
 }

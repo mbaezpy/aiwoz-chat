@@ -33,8 +33,7 @@
       </div> <!-- end chat-header -->
       
       <div class="chat-history">
-        <ul>
-        </ul>
+        <ul></ul>
         
       </div> <!-- end chat-history -->
       
@@ -50,8 +49,27 @@
       
     </div> <!-- end chat -->
     
+    <div class="graph people-list">
+
+    </div>
+    
   </div> <!-- end container -->
 
+<script id="graph-dic-template" type="text/x-handlebars-template">  
+      <ul class="list">
+        {{#each topics}} 
+        
+          <li class="clearfix topic">
+            <h4>{{topic}}</h4>
+          </li>
+            {{#each attributes}}         
+                <li class="clearfix">{{title}}<br><span class="badge badge-primary">{{attribute}}</span></li> 
+            {{/each}} 
+          {{/each}}
+      </ul>
+
+</script>
+    
 <script id="message-template" type="text/x-handlebars-template">
   <li class="clearfix">
     <div class="message-data align-right">
