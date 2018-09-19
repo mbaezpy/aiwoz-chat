@@ -7,7 +7,10 @@
     "@google-cloud/language": "^1.2.0",
     "@google-cloud/vision": "^0.21.0",
     "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "csvtojson": "^2.0.8",
     "express": "4.13.4",
+    "request": "^2.88.0",
     "socket.io": "^2.1.1"
   },
   "scripts": {

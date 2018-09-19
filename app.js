@@ -21,3 +21,7 @@ const io = require("socket.io")(server);
 // Load the chat socket api
 const socketAPI = require("./Socket");
 socketAPI.use(io);
+
+// Load the graph api
+const graphAPI = require("./Graph");
+graphAPI.use(app);
