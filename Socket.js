@@ -3,7 +3,10 @@
  * @author: Marcos Baez
  */
 
-const machine = require('./Machine');
+const controllers = require('./controllers');
+
+const ChatSessionMgr = controllers.session;
+const MachineMgr = controllers.machine;
 
 module.exports.use = function (io) {
 
@@ -11,70 +14,65 @@ module.exports.use = function (io) {
 
     socket.username = null;
     socket.role = null;
-    socket.room = null;
+    socket.room = null;    
 
-    //listen on change_username
-    socket.on('user_login', (data) => {
+    // When user joins
+    socket.on('user_login', (data, fn) => {
       socket.username = data.username;
       socket.role = data.role;
-      socket.room = data.room;
+      socket.room = data.room;      
       
-      socket.join(socket.room);
+      socket.join(socket.room);     
+      
+      // User is reconnecting 
+      if (data.sessionId) {
+        socket.sessionId = data.sessionId;
+        console.log("User reconnected to session id", data.sessionId);
+        return;
+      }
+      
+      console.log("User logged in, room", socket.room);
+      
+      ChatSessionMgr.logSession(data, (session) => {
+        fn(session._id);
+        socket.sessionId = session._id;
+      });              
+      
     });
 
     //listen on new_message
     socket.on('new_message', (data) => {
-      //broadcast the new message
+
       var msg = {
         message: data.message,
         type: data.type,
         role: socket.role,
         time: new Date(),
         username: socket.username
-      };      
+      };   
+      
+      console.log("Message received:", data.type, "from", socket.role)
 
+      // Messages from chatbots are not processed
       if (socket.role != "human") {
         io.sockets.in(socket.room).emit('new_message', msg);
         return;
-      }
+      }      
+      
+      // Messages from humans are processed
+      console.log("Interpreting message.")
+      try {
+        MachineMgr.interpret(data, (annotations) => {
+          msg.annotations = annotations;          
 
-      // Messages from humans are processed        
-
-      if (data.type == "image") {
-        machine.processImage(data.message, {
-          done: annotations => {
-
-            msg.annotations = {
-              labels: annotations.labelAnnotations,
-              landmarks: annotations.landmarkAnnotations,
-              faces: annotations.faceAnnotations,
-              properties: annotations.imagePropertiesAnnotation
-            };
-
-            io.sockets.in(socket.room).emit('new_message', msg);
-          },
-          error: err => {
-            io.sockets.in(socket.room).emit('error', {
-              msg: "Error processing image",
-              error: err
-            });
-          }
+          msg.time = Date.parse(msg.time);
+          ChatSessionMgr.logMessage(socket.sessionId, msg);
+          
+          io.sockets.in(socket.room).emit('new_message', msg);                    
         });
-      } else {
-        //TODO: process other types of messages
-
-        machine.processUserResponse(data.message, {
-          done: annotations => {
-            msg.annotations = annotations;
-            io.sockets.in(socket.room).emit('new_message', msg);
-          },
-          error: err => {
-            io.sockets.in(socket.room).emit('error', {
-              msg: "Error in NLU",
-              error: err
-            });
-          }
-        });
+      } catch(err){
+        console.log(err);
+        io.sockets.in(socket.room).emit('error', err);
       }
 
     });

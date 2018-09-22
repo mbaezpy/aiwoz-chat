@@ -6,6 +6,7 @@ $(function () {
   var username = null;
   var role = null;
   var room = null;
+  var sessionId = null;
 
   let searchParams = new URLSearchParams(window.location.search)
 
@@ -69,8 +70,12 @@ $(function () {
     socket.emit('user_login', {
       username: username,
       role: role,
-      room: room
+      room: room,
+      sessionId : sessionId
+    }, function(sessionID){
+      sessionId = sessionID
     });
+    
     $("body").addClass("role-" + role)
   })
 
@@ -126,6 +131,10 @@ $(function () {
 
   socket.on('error', (err) => {
     console.log(err)
+  })
+  
+  socket.on('disconnect', () => {
+    console.log('Disconnected from the server.')
   })
 
   $(".chat-message button").click(function () {
