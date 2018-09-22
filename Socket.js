@@ -11,11 +11,15 @@ module.exports.use = function (io) {
 
     socket.username = null;
     socket.role = null;
+    socket.room = null;
 
     //listen on change_username
     socket.on('user_login', (data) => {
       socket.username = data.username;
       socket.role = data.role;
+      socket.room = data.room;
+      
+      socket.join(socket.room);
     });
 
     //listen on new_message
@@ -27,11 +31,10 @@ module.exports.use = function (io) {
         role: socket.role,
         time: new Date(),
         username: socket.username
-      };
-
+      };      
 
       if (socket.role != "human") {
-        io.sockets.emit('new_message', msg);
+        io.sockets.in(socket.room).emit('new_message', msg);
         return;
       }
 
@@ -48,10 +51,10 @@ module.exports.use = function (io) {
               properties: annotations.imagePropertiesAnnotation
             };
 
-            io.sockets.emit('new_message', msg);
+            io.sockets.in(socket.room).emit('new_message', msg);
           },
           error: err => {
-            io.sockets.emit('error', {
+            io.sockets.in(socket.room).emit('error', {
               msg: "Error processing image",
               error: err
             });
@@ -63,10 +66,10 @@ module.exports.use = function (io) {
         machine.processUserResponse(data.message, {
           done: annotations => {
             msg.annotations = annotations;
-            io.sockets.emit('new_message', msg);
+            io.sockets.in(socket.room).emit('new_message', msg);
           },
           error: err => {
-            io.sockets.emit('error', {
+            io.sockets.in(socket.room).emit('error', {
               msg: "Error in NLU",
               error: err
             });
@@ -78,7 +81,7 @@ module.exports.use = function (io) {
 
     //listen on typing
     socket.on('typing', (data) => {
-      socket.broadcast.emit('typing', {
+      io.sockets.in(socket.room).emit('typing', {
         username: socket.username
       });
     });
