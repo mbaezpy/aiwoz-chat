@@ -5,13 +5,8 @@
 
 const request = require('request');
 const csv = require('csvtojson');
-var bodyParser = require('body-parser');
 
-
-module.exports.use = function (app) {
-
-  app.use(bodyParser.json()); // support json encoded bodies  
-  
+module.exports.use = function (app) {  
   
   // Getting the knowledge graph dictionary
   app.get('/api/graph', function (req, res) {

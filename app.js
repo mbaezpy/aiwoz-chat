@@ -4,11 +4,12 @@
 */
 
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
 
 //middlewares
-app.use(express.static('static'))
-
+app.use(express.static('static'));
+app.use(bodyParser.json()); 
 
 var port   = process.env.PORT || 8080;
 var server = app.listen(port, function(){
@@ -19,9 +20,13 @@ var server = app.listen(port, function(){
 const io = require("socket.io")(server);
 
 // Load the chat socket api
-const socketAPI = require("./Socket");
+const socketAPI = require("./api/Socket");
 socketAPI.use(io);
 
 // Load the graph api
-const graphAPI = require("./Graph");
+const graphAPI = require("./api/Graph");
 graphAPI.use(app);
+
+// Load the session monitoring api
+const sessionAPI = require("./api/Session");
+sessionAPI.use(app);

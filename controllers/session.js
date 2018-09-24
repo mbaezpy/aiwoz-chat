@@ -6,6 +6,15 @@
 const ChatSession = require('../models').session;
 
 
+module.exports.loadSessions = function(fn){
+  ChatSession.find({}, function(err, sessions){
+    if (err) throw { msg: "Error loading chat sessions", error: err };
+    
+    fn(sessions);
+  });
+  
+};
+
 module.exports.logSession = function (data, fn) {
 
   ChatSession.findOne({
@@ -58,6 +67,15 @@ module.exports.logMessage = function (sessionId, msg, fn) {
     });    
   
   });
-
-
 };
+
+module.exports.deleteSession = function (sessionId, fn) {
+
+  ChatSession.findByIdAndRemove(sessionId, function (err) {
+        
+      if (err) throw { msg: "Error deleting message", error: err };
+
+      if (fn) fn();
+  });    
+};
+

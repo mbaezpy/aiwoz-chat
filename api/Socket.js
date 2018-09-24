@@ -3,7 +3,7 @@
  * @author: Marcos Baez
  */
 
-const controllers = require('./controllers');
+const controllers = require('../controllers');
 
 const ChatSessionMgr = controllers.session;
 const MachineMgr = controllers.machine;
@@ -53,15 +53,17 @@ module.exports.use = function (io) {
       
       console.log("Message received:", data.type, "from", socket.role)
 
-      // Messages from chatbots are not processed
-      if (socket.role != "human") {
-        io.sockets.in(socket.room).emit('new_message', msg);
-        return;
-      }      
-      
-      // Messages from humans are processed
-      console.log("Interpreting message.")
       try {
+        // Messages from chatbots are not processed
+        if (socket.role != "human") {
+          io.sockets.in(socket.room).emit('new_message', msg);
+          ChatSessionMgr.logMessage(socket.sessionId, msg);
+          return;
+        }      
+
+        // Messages from humans are processed
+        console.log("Interpreting message.")
+      
         MachineMgr.interpret(data, (annotations) => {
           msg.annotations = annotations;          
 
