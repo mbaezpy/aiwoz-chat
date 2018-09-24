@@ -20,7 +20,9 @@ module.exports.use = function (io) {
     socket.on('user_login', (data, fn) => {
       socket.username = data.username;
       socket.role = data.role;
-      socket.room = data.room;      
+      socket.room = data.room;
+      socket.mlProcess = data.mlp == 1;
+      socket.ctxAware = data.ctx == 1;
       
       socket.join(socket.room);     
       
@@ -48,14 +50,15 @@ module.exports.use = function (io) {
         type: data.type,
         role: socket.role,
         time: new Date(),
-        username: socket.username
+        username: socket.username,
+        mlp : socket.mlp
       };   
       
       console.log("Message received:", data.type, "from", socket.role)
 
       try {
         // Messages from chatbots are not processed
-        if (socket.role != "human") {
+        if (socket.role != "human" || !socket.mlProcess) {
           io.sockets.in(socket.room).emit('new_message', msg);
           ChatSessionMgr.logMessage(socket.sessionId, msg);
           return;

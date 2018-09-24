@@ -6,6 +6,8 @@ var Schema = mongoose.Schema;
 var SessionParticipants = new Schema({ 
   username: String, 
   role : String,
+  ctx : String,
+  mlp : String,
   joined_at : Date
 });
 
@@ -16,6 +18,7 @@ var Message = new Schema({
   message: String,
   time : Date,
   type : String,
+  mlp : String,
   annotations: Object
 });
 

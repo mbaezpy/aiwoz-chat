@@ -7,6 +7,11 @@ $(function () {
   var role = null;
   var room = null;
   var sessionId = null;
+  
+  const CTX_LAB = 0;
+  const CTX_LAB_CONT = 1;
+  const CTX_CONT = 2;
+  const MLP_PROCESS = 1;
 
   let searchParams = new URLSearchParams(window.location.search)
 
@@ -64,13 +69,20 @@ $(function () {
     username = searchParams.get('username')
     role = searchParams.get('role')
     room = searchParams.get('room')
+    ctx  = searchParams.get('ctx')
+    mlp  = searchParams.get('mlp')
     
     console.log(room);    
+    
+    // just labels by default
+    ctx = ctx ? ctx : CTX_LAB;
 
     socket.emit('user_login', {
       username: username,
       role: role,
       room: room,
+      ctx : ctx,
+      mlp : mlp? mlp : MLP_PROCESS,
       sessionId : sessionId
     }, function(sessionID){
       sessionId = sessionID
@@ -103,22 +115,29 @@ $(function () {
       // all participants can see their own posts
       var tmpl = Handlebars.compile($("#message-template").html())
       msg = tmpl(params)
-    } else if (role == "human") {
+    } else {
+      
       // humans can see the content
-      var tmpl = Handlebars.compile($("#message-response-template").html())
-      msg = tmpl(params)
-    } else if (role == "chatbot") {
-      // chatbots can see only predicted labels
-
-      // look at the data type, and based on that the template
-      if (data.type == "image") {
-        var tmpl = Handlebars.compile($("#message-vision-template").html())
-        params.annotations = data.annotations
-        msg = tmpl(params)
-      } else {
-        var tmpl = Handlebars.compile($("#message-nlp-template").html())
-        params.annotations = data.annotations
-        msg = tmpl(params)
+      if (role == "human" || ctx == CTX_CONT || ctx == CTX_LAB_CONT) {      
+        var tmpl = Handlebars.compile($("#message-response-template").html())
+        msg = tmpl(params)      
+      }
+      
+      // chatbots can see only predicted labels, unless explicity
+      // defined to show labels and content. 
+      // labels are avoided if the only content option is chosen.
+      if (role == "chatbot" && ctx != CTX_CONT) {
+      
+        // look at the data type, and based on that the template
+        if (data.type == "image") {
+          var tmpl = Handlebars.compile($("#message-vision-template").html())
+          params.annotations = data.annotations
+          msg += tmpl(params)
+        } else {
+          var tmpl = Handlebars.compile($("#message-nlp-template").html())
+          params.annotations = data.annotations
+          msg += tmpl(params)
+        }
       }
     }
 
