@@ -58,6 +58,8 @@ $(function () {
   
 
   var sessions = null;
+  var currentSession = null;
+  
   $.get("/api/sessions", function (data) {
     var tmpl = Handlebars.compile($("#session-list-template").html())
     var el = tmpl({
@@ -73,12 +75,14 @@ $(function () {
     
     var session = sessions.find(function(item){
       return item._id == sessionId;
-    })
+    })    
     
     $(".sessions").hide();    
     var tmpl = Handlebars.compile($("#message-template").html());
     var el = tmpl({ messages: session.messages });
     $(".messages").append(el);   
+    
+    currentSession = session;
     
   });
   
@@ -104,6 +108,45 @@ $(function () {
     $(".messages .annotations").toggle(e.currentTarget.checked);
     
   });
+  
+  $(".messages").on("click", ".opt-mlp", function(e){
+    var $el = $(this);
+    var messageId = $el.data("messageid");
+    
+    var message = currentSession.messages.find(function(item){
+      return item._id == messageId;
+    })      
+    
+    console.log(message);
+    var msg = {
+      message : message.message,
+      type : message.type
+    };
+    
+    $el.addClass("disabled");
+    
+    $.ajax({
+        url: "/api/cognitive/interpret",
+        type: 'POST',
+        contentType: 'application/json',
+        data : JSON.stringify(msg),
+        success: function(data){
+          console.log(data);
+          
+          var tmpl = Handlebars.compile("{{{displayAnnotations annotations type}}}");
+          var el = tmpl({ type : msg.type, annotations : data });
+          $("#m-"+ messageId + " .annotations-mlp .card-body > div").append(el);
+          $("#m-"+ messageId + " .annotations-mlp").show();
+          $el.removeClass("disabled");
+          
+        },
+        error: function(){
+          console.log("Error processing message");
+          $el.removeClass("disabled").addClass("text-danger");
+        }
+    });          
+    
+  });  
   
 
 });

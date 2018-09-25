@@ -110,19 +110,27 @@
 <ul>
 {{#each messages}}   
   <li class="clearfix">
-    <div class="message-data"> 
-      <span 
-      {{#if (isEq role "chatbot") }}
-        class="badge badge-primary"
-      {{else}}
-       class="badge badge-dark"
-      {{/if}}    
-        >
-        {{formatTime time}}
-        <span class="badge-more">{{username}}</span>
-      </span>      
+    <div class="message-data row"> 
+      <div class="col-md-6">
+        <span 
+        {{#if (isEq role "chatbot") }}
+          class="badge badge-primary"
+        {{else}}
+         class="badge badge-dark"
+        {{/if}}    
+          >
+          {{formatTime time}}
+          <span class="badge-more">{{username}}</span>
+        </span>  
+      </div>  
+      <div class="col-md-6">
+        <button data-messageid="{{_id}}" type="button" class="btn btn-sm btn-link float-right opt-mlp">
+          <i class="fas fa-sync-alt"></i>
+          Process in latest model
+        </button>
+      </div>
     </div>
-    <div class="card message message-{{role}}">
+    <div id="m-{{_id}}" class="card message message-{{role}}">
       <div class="card-body">
         <p class="lead">
       {{#if (isEq type "image") }}
@@ -132,9 +140,27 @@
       {{/if}}
         </p>        
         <div class="annotations" style="display:none;">
-          <hr>
-        {{{displayAnnotations annotations type}}}
-        </div>  
+          
+          <div class="card">
+            
+               <div class="card-body">
+                 <h5 class="card-title">Labels and entities extracted durign the conversation</h5>
+                 <div>{{{displayAnnotations annotations type}}}</div>
+               </div> 
+          </div>            
+        </div> 
+        
+        <div class="annotations-mlp" style="display:none;">
+          <div class="card border-success">
+            
+               <div class="card-body">
+                 <h5 class="card-title">Labels and entities from latest model</h5>
+                 <div></div>
+               </div> 
+          </div>  
+          
+        </div>         
+        
         
       </div>
     </div>
@@ -202,7 +228,7 @@
 <script id="message-nlp-template" type="text/x-handlebars-template">
 
     <div class="message ai-message">
-      
+      <span class="small float-right">{{annotations.model}}</span>
       <div class="widget img-labels">
       <p>Labels</p>
       {{#each annotations.intent_ranking}}

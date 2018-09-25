@@ -30,3 +30,7 @@ graphAPI.use(app);
 // Load the session monitoring api
 const sessionAPI = require("./api/Session");
 sessionAPI.use(app);
+
+// Load the cognitive api
+const cognitiveAPI = require("./api/Cognitive");
+cognitiveAPI.use(app);
