@@ -70,7 +70,7 @@ module.exports.processUserResponse = (query, cb) =>{
   axios.get(baseUrl, {
     params : {
       q : query,
-      project : "current"
+      project : "topics"
     }
   })
   .then(function (response) {
