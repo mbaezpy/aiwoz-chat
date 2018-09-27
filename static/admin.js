@@ -51,7 +51,7 @@ $(function () {
         msg = tmpl({annotations : data})
       } else {
         var tmpl = Handlebars.compile($("#message-nlp-template").html())
-        msg = tmpl({annotations : data})
+        msg = tmpl({aspects : data})
       }
       return msg;
   });  

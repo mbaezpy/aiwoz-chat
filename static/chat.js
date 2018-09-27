@@ -135,7 +135,7 @@ $(function () {
           msg += tmpl(params)
         } else {
           var tmpl = Handlebars.compile($("#message-nlp-template").html())
-          params.annotations = data.annotations
+          params.aspects = data.annotations
           msg += tmpl(params)
         }
       }

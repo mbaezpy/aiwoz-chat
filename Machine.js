@@ -67,19 +67,51 @@ module.exports.processText = (text, cb) => {
 module.exports.processUserResponse = (query, cb) =>{
   const baseUrl = "https://dry-thicket-91678.herokuapp.com/parse";
   
-  axios.get(baseUrl, {
-    params : {
-      q : query,
-      project : "topics"
+  var aspects = ["topics", "smalltalk"];
+  var callQ = [];
+  
+  var mergeCalls = function(){
+    var done = true;
+    var annotations = [];
+    callQ.forEach(function(fn, i){
+      done = done && fn.done;      
+      annotations.push({
+        name : aspects[i],
+        annotations : fn.response.data
+      });
+    });
+    
+    if (done){    
+      cb.done(annotations);
     }
-  })
-  .then(function (response) {
-    // handle success
-    cb.done(response.data);
-  })
-  .catch(function (err) {
-    // handle error
-    if (cb.error) cb.error('ERROR: ' + err); 
+    
+  };
+  
+  aspects.forEach(function(bot, i){
+    callQ.push(function(){
+      axios.get(baseUrl, {
+        params : {
+          q : query,
+          project : aspects[i]
+        }
+      })
+      .then(function (response) {
+        // handle success
+        callQ[i].done = true;
+        callQ[i].response = response;
+        mergeCalls();
+      })
+      .catch(function (err) {
+        // handle error
+        // TODO: This does not work
+        if (cb.error) cb.error('ERROR: ' + err); 
+        
+      });
+    })
   });
+  
+  callQ.forEach(function(fn){fn()}); 
+    
+  
   
 };

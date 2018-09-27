@@ -160,7 +160,12 @@
       <span class="message-data-name"><i class="fa fa-circle online"></i> {{username}}</span>
       <span class="message-data-time">{{time}}, Today</span>
     </div>  
+    
+
     <div class="message ai-message">
+    {{#each aspects}}      
+      <p class="mt-4"><i class="fas fa-robot"></i> <span class="text-uppercase">{{name}}</span></p>
+      <span class="small float-right">{{annotations.model}}</span>      
       
       <div class="widget img-labels">
       <p>Labels</p>
@@ -199,8 +204,9 @@
           <p>Entities not detected</p>
         </div>
       {{/if}}
-
+  {{/each}}  
   </div>
+
   </li>
 </script>    
 
