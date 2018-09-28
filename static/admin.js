@@ -80,7 +80,7 @@ $(function () {
     $(".sessions").hide();    
     var tmpl = Handlebars.compile($("#message-template").html());
     var el = tmpl({ messages: session.messages });
-    $(".messages").append(el);   
+    $(".messages").append(el).show();   
     
     currentSession = session;
     
@@ -108,6 +108,23 @@ $(function () {
     $(".messages .annotations").toggle(e.currentTarget.checked);
     
   });
+  
+  var processMessage = function(msg, cb){
+    $.ajax({
+        url: "/api/cognitive/interpret",
+        type: 'POST',
+        contentType: 'application/json',
+        data : JSON.stringify(msg),
+        success: function(data){
+          cb.done(data);                    
+        },
+        error: function(){
+          console.log("Error processing message");
+          cb.error();
+        }
+    });           
+  };
+  
   
   $(".messages").on("click", ".opt-mlp", function(e){
     var $el = $(this);
@@ -147,6 +164,166 @@ $(function () {
     });          
     
   });  
+  
+  
+  $('.testing').on("keydown", "textarea", function (event) {
+    var keypressed = event.keyCode || event.which;
+    if (keypressed == 13) {
+      event.preventDefault();
+      var message = $("#test-message").val();
+      var $el = $(this);
+
+      var msg = {
+        message : message,
+        type : "text"
+      };    
+
+      $el.attr("disabled", ""); 
+      $("#test-message").val('');
+      processMessage(msg, {
+        done : function(data){
+          var tmpl = Handlebars.compile($("#training-results-template").html());
+          var el = tmpl({ type : msg.type, 
+                         annotations : data,
+                         message : msg.message
+                        });        
+
+          $(".testing .test-results").prepend(el);
+          $el.removeAttr("disabled");
+          $el.focus();
+
+        },
+        error : function(){
+        }      
+      });    
+    }
+  });
+  
+  $(".schema").on("click", ".opt-add-question", function(e){  
+    var question = {
+      question : $("#question-title").val(),
+      topic : $("#question-topic").val(),
+      attributes : []
+    };
+    
+    var attributes = $("#question-attributes").val().split("\n");
+    attributes.forEach(function(attr, i){
+      var c = attr.split(",");
+      question.attributes.push({
+        name : c[0].trim(),
+        type : c[1]? c[1].trim() : 'String'
+      });
+    });
+    
+    console.log(question);
+    
+    $(".opt-add-question").addClass("disabled"); 
+    $.ajax({
+        url: "/api/graph/questions",
+        type: 'POST',
+        contentType: 'application/json',
+        data : JSON.stringify(question),
+        success: function(data){
+          renderSchema();   
+        },
+        error: function(){
+          console.log("Error processing message");
+          $(".opt-add-question").removeClass("disabled");          
+        }
+    });       
+    
+  });
+  
+  $(".schema").on("click", ".opt-delete-question", function(e){
+    var questionId = $(this).data("questionid");
+    
+    $.ajax({
+        url: "/api/graph/questions/" + questionId,
+        type: 'DELETE',
+        success: function(){
+          renderSchema(); 
+        },
+        error: function(){
+          console.log("Error deleting session");
+          $(".opt-delete-question").removeClass("btn-outline-dark").addClass("btn-outline-danger");
+        }
+    });         
+    
+  });    
+  
+
+  var questions = null;
+  var displayRandomQuestion = function(){
+    var q = questions[Math.floor(Math.random() * questions.length)];        
+    var tmpl = Handlebars.compile($("#rand-question-template").html());
+    var el = tmpl(q);  
+    $(".testing .rand-question").html(el);  
+  };
+  var loadRandomQuestion = function(){
+        
+    if (!questions){    
+      $.get("/api/graph/questions", function (data) {
+        questions = data;
+        displayRandomQuestion();
+      });      
+    } else {
+      displayRandomQuestion();
+    }
+    
+  };
+  $(".testing").on("click", ".opt-rand-question", function(e){
+    displayRandomQuestion();
+  });
+  
+  
+  var renderSandbox = function(){
+    var tmpl = Handlebars.compile($("#training-template").html());
+    var el = tmpl({});
+    $(".testing").html(el);  
+    questions = null;
+    
+    loadRandomQuestion();
+    
+  };
+  
+  var renderSchema = function(){
+    var tmpl = Handlebars.compile($("#schema-template").html());
+    var el = tmpl({topics : ["school", "family", "childhood"]});
+    $(".schema").html(el);          
+    
+    $.get("/api/graph/questions", function (data) {
+      var tmpl = Handlebars.compile($("#schema-questions-template").html());
+      var el = tmpl({
+        questions: data
+      });
+      
+      $(".schema .questions").append(el);
+    });              
+  };  
+  
+  var loadTab = function(){
+    var tab = window.location.hash.split("/").pop();
+    console.log(tab)
+    if (! tab) tab = "sessions";
+    
+    $(".tab").hide();    
+    
+    $("." + tab).show();    
+    $("nav .nav-item").removeClass("active").filter(".tab-"+tab).addClass("active");
+    
+    if (tab == "testing"){      
+      renderSandbox();
+    } else if (tab == "schema") {
+      renderSchema();
+    }
+    
+  };
+  
+  
+  $(window).on('hashchange', function() {
+    loadTab();
+  });  
+  loadTab();
   
 
 });

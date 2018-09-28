@@ -6,7 +6,38 @@
 const request = require('request');
 const csv = require('csvtojson');
 
+const controllers = require('../controllers');
+const Question = controllers.question;
+
 module.exports.use = function (app) {  
+  
+  // Managing questions
+  
+  app.post('/api/graph/questions', function (req, res) {
+    
+    var data = req.body;  
+    
+    Question.saveQuestion(data, (question) => {
+        res.json(question);           
+    });    
+      
+  });    
+    
+  app.get('/api/graph/questions', function (req, res) {
+    
+      Question.getQuestions((questions) => {
+        res.json(questions);
+      });      
+  });  
+  
+  app.delete('/api/graph/questions/:id',function (req, res) {
+    
+      var id = req.params.id;
+    
+      Question.deleteQuestion(id, () => {
+        res.end();
+      });      
+  });    
   
   // Getting the knowledge graph dictionary
   app.get('/api/graph', function (req, res) {
@@ -63,9 +94,6 @@ module.exports.use = function (app) {
     });    
     
     
-  }); 
-    
-  
-  
+  });       
   
 };
