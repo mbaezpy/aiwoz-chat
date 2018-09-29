@@ -65,9 +65,9 @@ module.exports.processText = (text, cb) => {
 };
 
 module.exports.processUserResponse = (query, cb) =>{
-  const baseUrl = "https://dry-thicket-91678.herokuapp.com/parse";
+  const baseUrl = process.env.NLU_ENDPOINT;  
   
-  var aspects = ["topics", "smalltalk"];
+  var aspects = ["topics", "smalltalk", "empathy"];
   var callQ = [];
   
   var mergeCalls = function(){
